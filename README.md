@@ -21,11 +21,14 @@ The program should be invoked two command-line arguments specifying input and
 output files. For example: 
 
 ```
-$ ./reverse input.txt output.txt
+$ ./reverse
 ```
+and then input all the text you want to be reversed. Then press ```Ctlr + d``` to execute the reversion.
 
 If the output file is not provided the program will print the reversed lines to 
 standard output stream. 
+
+
 
 ## Project 2 - Unix utilities
 
