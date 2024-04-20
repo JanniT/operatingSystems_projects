@@ -33,6 +33,16 @@ This app function the same way as unix `cat` command, where it can print the
 contents of a file, or if not given any filepath parameter, it will print out 
 stdin.
 
+### my-grep
+
+This utility is a variant of the unix `grep` command, where it looks through a file line by line and tries to find user-specified search term in the line. If it finds a line with the word in it, the line is printed out. If a search term is provided but the file isn't, my-grep reads and searches the term from the standard input.
+
+Run the program:  
+
+```
+$ ./my-grep word file.txt
+```
+
 ## Authors
 
 These projects are done together by:

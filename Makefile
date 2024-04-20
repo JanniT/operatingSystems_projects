@@ -3,8 +3,9 @@ ARGS = -pedantic -Wall -Werror
 
 REVERSEAPP = reverse
 MYCATAPP = my-cat
+MYGREPAPP = my-grep
 
-all: $(REVERSEAPP) $(MYCATAPP)
+all: $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP)
 
 # reverse
 $(REVERSEAPP): Project1/reverse.c
@@ -14,5 +15,9 @@ $(REVERSEAPP): Project1/reverse.c
 $(MYCATAPP): Project2/my-cat.c
 	$(CC) Project2/my-cat.c -o $(MYCATAPP) $(ARGS)
 
+# my-grep
+$(MYGREPAPP): Project2/my-cat.c
+	$(CC) Project2/my-grep.c -o $(MYGREPAPP) $(ARGS)
+
 clean:
-	rm $(REVERSEAPP) $(MYCATAPP)
+	rm $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP)
