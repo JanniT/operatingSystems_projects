@@ -23,7 +23,7 @@ output files. For example:
 ```
 $ ./reverse
 ```
-and then input all the text you want to be reversed. Then press ```Ctlr + d``` to execute the reversion.
+and then input all the text you want to be reversed. Then press ```Ctrl + D``` to execute the reversion.
 
 ## Project 2 - Unix utilities
 
@@ -35,12 +35,14 @@ stdin.
 
 ### my-grep
 
-This utility is a variant of the unix `grep` command, where it looks through a file line by line and tries to find user-specified search term in the line. If it finds a line with the word in it, the line is printed out. If a search term is provided but the file isn't, my-grep reads and searches the term from the standard input.
+This utility is a variant of the unix `grep` command, where it looks through a file line by line and tries to find user-specified search term in the line. If it finds a line with the word in it, the line is printed out. 
+
+If a search term is provided but a file isn't, my-grep reads and searches the term from the standard input. This is done until user pressess ```Ctrl + D```
 
 Run the program:  
 
 ```
-$ ./my-grep word file.txt
+$ ./my-grep term file.txt
 ```
 
 ## Authors
