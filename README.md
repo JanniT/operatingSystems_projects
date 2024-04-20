@@ -25,11 +25,6 @@ $ ./reverse
 ```
 and then input all the text you want to be reversed. Then press ```Ctlr + d``` to execute the reversion.
 
-If the output file is not provided the program will print the reversed lines to 
-standard output stream. 
-
-
-
 ## Project 2 - Unix utilities
 
 ### my-cat
