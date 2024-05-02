@@ -45,6 +45,13 @@ Run the program:
 $ ./my-grep term file.txt
 ```
 
+or:
+
+```
+$ ./my-grep term
+```
+and then giving text as standard input until ````Ctrl + D```
+
 ## Authors
 
 These projects are done together by:
