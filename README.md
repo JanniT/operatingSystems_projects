@@ -50,7 +50,7 @@ or:
 ```
 $ ./my-grep term
 ```
-and then giving text as standard input until ````Ctrl + D```
+and then giving text as standard input until pressing ```Ctrl + D```
 
 ## Authors
 
