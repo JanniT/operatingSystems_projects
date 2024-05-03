@@ -52,6 +52,16 @@ $ ./my-grep term
 ```
 and then giving text as standard input until pressing ```Ctrl + D```
 
+### my-zip
+
+This utility is a simple file compression tool that uses run-length encoding (RLE). It compressess file(s) via replacing consecutive sequences of the same character with a single character followed by the count of that character. 
+
+Run the program: 
+
+```
+$ ./my-zip file1 [file2 ...] > compressed_output.z
+```
+
 ## Authors
 
 These projects are done together by:
