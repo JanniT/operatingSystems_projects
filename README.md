@@ -56,10 +56,22 @@ and then giving text as standard input until pressing ```Ctrl + D```
 
 This utility is a simple file compression tool that uses run-length encoding (RLE). It compressess file(s) via replacing consecutive sequences of the same character with a single character followed by the count of that character. 
 
+If user gives multiple files to be compressed, they're separated with a separator, which helps the my-unzip app to check and separate the file contents.
+
 Run the program: 
 
 ```
 $ ./my-zip file1 [file2 ...] > compressed_output.z
+```
+
+### my-unzip
+
+The my-unzip app simply does the reverse of the previous my-zip app, taking in a compressed file(s) and writing (to standard output) the uncompressed results. The my-unzip supports decompressing of multiple zip files.
+
+Run the program: 
+
+```
+$ ./my-unzip file1 [file2 ...]
 ```
 
 ## Authors
