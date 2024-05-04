@@ -24,6 +24,9 @@ void my_zip(FILE *file){
             char_current = char_next;
         }
     }
+    // making sure that each file can be separated
+    long int separator = 0;
+    fwrite(&separator, sizeof(int)+sizeof(char), 1, stdout);
 }
 
 int main(int argc, char *argv[]){

@@ -5,8 +5,9 @@ REVERSEAPP = reverse
 MYCATAPP = my-cat
 MYGREPAPP = my-grep
 MYZIPAPP = my-zip
+MYUNZIPAPP = my-unzip
 
-all: $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP)
+all: $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP)
 
 # reverse
 $(REVERSEAPP): Project1/reverse.c
@@ -24,5 +25,9 @@ $(MYGREPAPP): Project2/my-grep.c
 $(MYZIPAPP): Project2/my-zip.c
 	$(CC) Project2/my-zip.c -o $(MYZIPAPP) $(ARGS)
 
+# my-unzip
+$(MYUNZIPAPP): Project2/my-unzip.c
+	$(CC) Project2/my-unzip.c -o $(MYUNZIPAPP) $(ARGS)
+
 clean:
-	rm $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP)
+	rm $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP)
