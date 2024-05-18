@@ -6,8 +6,9 @@ MYCATAPP = my-cat
 MYGREPAPP = my-grep
 MYZIPAPP = my-zip
 MYUNZIPAPP = my-unzip
+MYSHELLAPP = wish
 
-all: $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP)
+all: $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP) $(MYSHELLAPP)
 
 # reverse
 $(REVERSEAPP): Project1/reverse.c
@@ -29,5 +30,9 @@ $(MYZIPAPP): Project2/my-zip.c
 $(MYUNZIPAPP): Project2/my-unzip.c
 	$(CC) Project2/my-unzip.c -o $(MYUNZIPAPP) $(ARGS)
 
+# wish
+$(MYSHELLAPP): Project3/main.c Project3/cmd.c Project3/cmd.h Project3/const.h
+	$(CC) Project3/main.c Project3/cmd.c -o $(MYSHELLAPP) $(ARGS)
+
 clean:
-	rm $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP)
+	rm $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP) $(MYSHELLAPP)

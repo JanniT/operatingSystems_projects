@@ -1,0 +1,10 @@
+doesnotexist jeerock "this is in quotes"
+
+pwd
+cd "/Users"
+
+#This is a comment
+#   This too
+
+pwd
+exit 120
