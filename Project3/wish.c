@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <stdarg.h>
 
 #include "const.h"
 #include "cmd.h"
@@ -38,39 +37,26 @@ void print_prompt(void) {
         }
     }
 
-    strcat(buf, " $ ");
+    strcat(buf, "$ ");
     printf("%s", buf + i);
 }
 
-void reveal(char *str, size_t *len) {
-    for (size_t i = 0; i < *len; ++i) {
-        switch (str[i]) {
-            case '\n':
-                printf("\\n");
-                break;
-            case '\0':
-                printf("\\0");
-                break;
-            default:
-                printf("%c", str[i]);
-        }
-    }
-    printf("\n");
-}
-
 int execute_command(int argc, char (*argv)[MAX_ARG_LEN]) {
+    argc++; // Include command name as one parameter
+
     int ret = execute_internal(argc, argv);
     if (ret != -1) { // Command was internal
         return ret;
     }
 
-    if (ret != 0) {
+    if (ret > 0) {
         printf("%s: command not found\n", argv[0]);
         return ret;
     }
 
-    // TODO: Command is external program
-    return 0;
+    ret = execute_external(argc, argv);
+
+    return ret;
 }
 
 // Parse arguments from a string into an array by using a whitespace as 
@@ -82,15 +68,12 @@ int execute_command(int argc, char (*argv)[MAX_ARG_LEN]) {
 // argc  -> num of args
 // quote -> can whitespace be ignored?
 void argparse(char (*argv)[MAX_ARG_LEN], char *str, int *argc, int *quote) {
-    int len = *quote - 1; // Lenght of curren argument that is being parsed
-    bool split = false;
-
-    if (len < 0) {
-        len = 0;
-    }
+    int len = (*quote) - 1; // Lenght of curren argument that is being parsed
+    if (len < 0) { len = 0; }
     
-    // Current character offset from input string
-    int offset = 0;
+
+    int offset = 0; // Current character offset from input string
+    bool split = false;
 
     while (str[offset++] != '\0') {
         char cur = str[offset - 1];
@@ -99,10 +82,7 @@ void argparse(char (*argv)[MAX_ARG_LEN], char *str, int *argc, int *quote) {
             *quote = (int)(*quote == 0);
             continue;
         }
-
-        if (*quote != 0) {
-            (*quote)++;
-        }
+        *quote += (*quote != 0);
 
         // Check for whitespace characters like \n \t and spaces
         bool isWhitespace = false;
@@ -133,9 +113,6 @@ void argparse(char (*argv)[MAX_ARG_LEN], char *str, int *argc, int *quote) {
 
     // Null terminate last arg
     argv[*argc][len] = '\0';
-
-    // Increase argument count to include command as one argument
-    (*argc)++;
 }
 
 // Read stdin and execute command right away

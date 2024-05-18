@@ -1,14 +1,18 @@
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
+#include "path.h"
 #include "cmd.h"
+
+extern char path[MAX_PATH_LEN];
 
 static const internal_cmd commands[] = {
     { "exit", &cmd_exit },
     { "pwd", &cmd_pwd },
     { "cd", &cmd_cd },
+    { "path", &cmd_path },
 };
 
 int check_ret(char *s) {
@@ -20,6 +24,16 @@ int check_ret(char *s) {
     }
 
     return ret;
+}
+
+int cmd_path(int argc, char (*argv)[MAX_ARG_LEN]) {
+    if (argc == 1) {
+        printf("%s\n", path);
+        return 0;
+    }
+    update_path(argv[1]);
+
+    return 0;
 }
 
 int cmd_cd(int argc, char (*argv)[MAX_ARG_LEN]) {
@@ -65,7 +79,28 @@ int cmd_pwd(int argc, char (*argv)[MAX_ARG_LEN]) {
 }
 
 int execute_external(int argc, char (*argv)[MAX_ARG_LEN]) {
-    // TODO
+    char cmdpath[MAX_ARG_LEN];
+    if (which_path(argv[0], cmdpath) != 0) {
+        printf("wish: command not found: %s\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *cmdargs[MAX_ARG_LEN] = { 0 };
+    for (int i = 0; i < argc; ++i) {
+        cmdargs[i] = argv[i];
+    }
+
+    int rc = fork();
+    if (rc < 0) {
+        printf("ERR: forking failed\n");
+        return EXIT_FAILURE;
+    } else if (rc == 0) {
+        execv(cmdpath, cmdargs);
+        return errno;
+    } else {
+        wait(NULL);
+    }
+
     return EXIT_SUCCESS;
 }
 

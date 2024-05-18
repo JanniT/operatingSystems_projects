@@ -15,9 +15,11 @@ struct {
 
 int check_ret(char *s);
 int execute_internal(int argc, char (*argv)[MAX_ARG_LEN]);
+int execute_external(int argc, char (*argv)[MAX_ARG_LEN]);
 
 int cmd_exit(int argc, char (*argv)[MAX_ARG_LEN]);
 int cmd_pwd(int argc, char (*argv)[MAX_ARG_LEN]);
 int cmd_cd(int argc, char (*argv)[MAX_ARG_LEN]);
+int cmd_path(int argc, char (*argv)[MAX_ARG_LEN]);
 
 #endif // CMD_H
