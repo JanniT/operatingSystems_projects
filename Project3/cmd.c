@@ -64,6 +64,11 @@ int cmd_pwd(int argc, char (*argv)[MAX_ARG_LEN]) {
     return 0;
 }
 
+int execute_external(int argc, char (*argv)[MAX_ARG_LEN]) {
+    // TODO
+    return EXIT_SUCCESS;
+}
+
 int execute_internal(int argc, char (*argv)[MAX_ARG_LEN]) {
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); ++i) {
         internal_cmd cmd = commands[i];

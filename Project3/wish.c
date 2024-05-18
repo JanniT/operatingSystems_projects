@@ -73,7 +73,15 @@ int execute_command(int argc, char (*argv)[MAX_ARG_LEN]) {
     return 0;
 }
 
-void argparse(char (*buf)[MAX_ARG_LEN], char *str, int *arg, int *quote) {
+// Parse arguments from a string into an array by using a whitespace as 
+// a delimiter. The delimiter is ignored when in quotes, and will update
+// the "quote" arg with non-zero value.
+//
+// argv  -> parsed argument array
+// str   -> string to be parsed
+// argc  -> num of args
+// quote -> can whitespace be ignored?
+void argparse(char (*argv)[MAX_ARG_LEN], char *str, int *argc, int *quote) {
     int len = *quote - 1; // Lenght of curren argument that is being parsed
     bool split = false;
 
@@ -112,25 +120,26 @@ void argparse(char (*buf)[MAX_ARG_LEN], char *str, int *arg, int *quote) {
         // Split string
         if (split) {
             // Null terminate current arg
-            buf[*arg][len] = '\0';
+            argv[*argc][len] = '\0';
 
             split = false;
-            (*arg)++;
+            (*argc)++;
             len = 0;
         }
 
         // Copy character over to the buffer
-        buf[*arg][len++] = cur;
+        argv[*argc][len++] = cur;
     }
 
     // Null terminate last arg
-    buf[*arg][len] = '\0';
+    argv[*argc][len] = '\0';
 
     // Increase argument count to include command as one argument
-    (*arg)++;
+    (*argc)++;
 }
 
-void run_interactive(void) {
+// Read stdin and execute command right away
+int run_interactive(void) {
     char current_line[MAX_ARG_LEN] = { 0 };
     char buf[MAX_ARG_ROWS][MAX_ARG_LEN] = { 0 };
     
@@ -140,15 +149,22 @@ void run_interactive(void) {
     int num_of_args = 0;
     int quote = 0; // Buffer has unclosed quote
 
+    int ret = EXIT_SUCCESS;
+
     while (fgets(current_line, MAX_ARG_LEN, stdin) != NULL) {
         argparse(buf, current_line, &num_of_args, &quote);
+
+        // If quote is left unclosed, parse lines until closing quote is found.
+        // This allows for user to input multi-line text, with all whitespace
+        // included.
         if (quote) {
             printf("dquote> ");
             continue;
         }
 
+        // Ignore empty lines and comment lines that start with '#'
         if (strlen(buf[0]) != 0 && buf[0][0] != '#') {
-            (void)execute_command(num_of_args, buf);
+            ret = execute_command(num_of_args, buf);
         }
 
         quote = 0;
@@ -156,37 +172,52 @@ void run_interactive(void) {
 
         print_prompt();
     }
+
+    return ret;
 }
 
-void run_batch(FILE *file) {
+// Run file that contains commands
+int run_batch(FILE *file) {
     char line[128];
     char buf[MAX_ARG_ROWS][MAX_ARG_LEN] = {0};
     int quote = 0;
+
+    int ret = EXIT_SUCCESS;
 
     while (fgets(line, MAX_ARG_LEN, file) != NULL) {
         int num_of_args = 0;
 
         argparse(buf, line, &num_of_args, &quote);
 
+        // TODO: Test if multi-line quotes work here too
+        //if (quote) {
+        //    continue;
+        //}
         if (quote) {
-            printf("ERR: Unclosed quote");
+            printf("ERR: Unclosed quote\n->%s\n", line);
+            ret = EXIT_FAILURE;
             break;
         }
 
+        // Ignore empty lines and comment lines that start with '#'
         if (strlen(buf[0]) != 0 && buf[0][0] != '#') {
-            execute_command(num_of_args, buf);
+            ret = execute_command(num_of_args, buf);
         }
     }
+
+    return ret;
 }
 
 int main(int argc, char **argv) {
+    int ret = EXIT_SUCCESS;
+
     if (argc < 2) {
-        run_interactive();
+        ret = run_interactive();
     } else {
         FILE *file = fopen(argv[1], "r");
-        run_batch(file);
+        ret = run_batch(file);
         fclose(file);
     }
 
-    return EXIT_SUCCESS;
+    return ret;
 }
