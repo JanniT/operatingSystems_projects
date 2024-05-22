@@ -31,8 +31,8 @@ $(MYUNZIPAPP): Project2/my-unzip.c
 	$(CC) Project2/my-unzip.c -o $(MYUNZIPAPP) $(ARGS)
 
 # wish
-$(MYSHELLAPP): Project3/wish.c Project3/cmd.c Project3/cmd.h Project3/const.h Project3/path.c Project3/path.h
-	$(CC) Project3/wish.c Project3/cmd.c Project3/path.c -o $(MYSHELLAPP) $(ARGS)
+$(MYSHELLAPP): Project3/wish.c Project3/cmd.c Project3/cmd.h Project3/const.h Project3/path.c Project3/path.h Project3/argparse.c Project3/argparse.h
+	$(CC) Project3/wish.c Project3/cmd.c Project3/path.c Project3/argparse.c -o $(MYSHELLAPP) $(ARGS)
 
 clean:
 	rm -f $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP) $(MYSHELLAPP)

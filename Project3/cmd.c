@@ -1,9 +1,3 @@
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <unistd.h>
-
-#include "path.h"
 #include "cmd.h"
 
 extern char path[MAX_PATH_LEN];
@@ -78,41 +72,60 @@ int cmd_pwd(int argc, char (*argv)[MAX_ARG_LEN]) {
     return 0;
 }
 
-int execute_external(int argc, char (*argv)[MAX_ARG_LEN]) {
+int execute_external(parsed_command *cmd) {
     char cmdpath[MAX_ARG_LEN];
-    if (which_path(argv[0], cmdpath) != 0) {
-        printf("wish: command not found: %s\n", argv[0]);
+    if (which_path(cmd->argv[0], cmdpath) != 0) {
+        printf("wish: command not found: %s\n", cmd->argv[0]);
         return EXIT_FAILURE;
     }
 
     char *cmdargs[MAX_ARG_LEN] = { 0 };
-    for (int i = 0; i < argc; ++i) {
-        cmdargs[i] = argv[i];
+    for (int i = 0; i < cmd->argc; ++i) {
+        cmdargs[i] = cmd->argv[i];
     }
 
+    pid_t pid = 0;
     int rc = fork();
     if (rc < 0) {
         printf("ERR: forking failed\n");
         return EXIT_FAILURE;
     } else if (rc == 0) {
+        pid = getpid();
+        if (cmd->background) { printf("-> %d\n", pid); }
         execv(cmdpath, cmdargs);
-        return errno;
     } else {
-        wait(NULL);
+        if (!cmd->background) { wait(NULL); }
     }
 
-    return EXIT_SUCCESS;
+    return errno;
 }
 
-int execute_internal(int argc, char (*argv)[MAX_ARG_LEN]) {
+int execute_internal(parsed_command *cmd) {
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); ++i) {
-        internal_cmd cmd = commands[i];
+        internal_cmd icmd = commands[i];
 
-        if (strcmp(cmd.cmd, argv[0]) == 0) {
-            return (*cmd.callback)(argc, argv);
+        if (strcmp(icmd.cmd, cmd->argv[0]) == 0) {
+            return (*icmd.callback)(cmd->argc, cmd->argv);
         }
     }
 
     return -1; // Command was not found, is not internal
 }
+
+int execute_command(parsed_command *cmd) {
+    int ret = execute_internal(cmd);
+    if (ret != -1) { return ret; }
+
+    if (ret > 0) {
+        char errbuf[MAX_ARG_LEN] = { 0 };
+        snprintf(errbuf, MAX_ARG_LEN, "%s: command not found\n", cmd->argv[0]);
+        write(STDERR_FILENO, errbuf, strlen(errbuf));
+        return ret;
+    }
+
+    ret = execute_external(cmd);
+
+    return ret;
+}
+
 

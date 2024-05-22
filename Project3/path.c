@@ -8,7 +8,11 @@
 
 #define PATH_DELIM ":"
 
+#ifdef DEBUG
 char path[MAX_PATH_LEN] = "/bin:/usr/bin:/usr/local/bin";
+#else
+char path[MAX_PATH_LEN] = "/bin";
+#endif
 
 int check_path_included(char *newpath) {
     char p[MAX_PATH_LEN];
