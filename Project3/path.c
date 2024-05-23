@@ -5,6 +5,7 @@
 
 #include "path.h"
 #include "const.h"
+#include "util.h"
 
 #define PATH_DELIM ":"
 
@@ -32,14 +33,14 @@ int check_path_included(char *newpath) {
 
 int update_path(char *newpath) {
     if (!check_path_included(newpath)) {
-        printf("ERR: Path already included\n");
+        printerr("%s: path already included\n", PROGNAME);
         return 1;
     }
 
     // Check if such file exists
     if (access(newpath, F_OK)) {
         if (errno == ENOTDIR) {
-            printf("ERR: Path dir does not exist\n");
+            printerr("%s: Path dir does not exist\n", PROGNAME);
             return 1;
         }
     }

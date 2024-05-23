@@ -2,6 +2,7 @@
 
 extern char path[MAX_PATH_LEN];
 
+// Map command names to functions
 static const internal_cmd commands[] = {
     { "exit", &cmd_exit },
     { "pwd", &cmd_pwd },
@@ -9,31 +10,37 @@ static const internal_cmd commands[] = {
     { "path", &cmd_path },
 };
 
+// Check if atoi actually failed in the case the string actually was a 0
+// Since atoi will return 0 when parsing failed, which is also a valid
+// parsing result
 int check_ret(char *s) {
     int ret = atoi(s);
 
     if (ret == 0 && strcmp("0\0", s) != 0) {
-        printf("ERR: Invalid input\n"); 
+        printerr("%s: invalid input\n", PROGNAME);
         ret = -1;
     }
 
     return ret;
 }
 
-int cmd_path(int argc, char (*argv)[MAX_ARG_LEN]) {
-    if (argc == 1) {
+// Get or modify path
+int cmd_path(parsed_command *cmd) {
+    if (cmd->argc == 1) {
         printf("%s\n", path);
         return 0;
     }
-    update_path(argv[1]);
+    update_path(cmd->argv[1]);
 
     return 0;
 }
 
-int cmd_cd(int argc, char (*argv)[MAX_ARG_LEN]) {
-    char *d = argv[1];
+// Change directory
+int cmd_cd(parsed_command *cmd) {
+    char *d = cmd->argv[1];
 
-    if (argc == 1) {
+    // If no argument is given, default to home dir
+    if (cmd->argc == 1) {
         d = getenv("HOME");
         if (d == NULL) {
             return -1;
@@ -41,20 +48,21 @@ int cmd_cd(int argc, char (*argv)[MAX_ARG_LEN]) {
     }
 
     if (chdir(d) != 0) {
-        printf("cd: no such file or directory: %s\n", d);
+        printerr("%s: no such file or directory: %s\n", cmd->argv[0], d);
         return errno;
     }
 
     return 0;
 }
 
-int cmd_exit(int argc, char (*argv)[MAX_ARG_LEN]) {
+// Exit shell
+int cmd_exit(parsed_command *cmd) {
     int ret = 0; // Default to success if no argument given
 
-    if (argc > 1) {
-        ret = check_ret(argv[1]);
+    if (cmd->argc > 1) {
+        ret = check_ret(cmd->argv[1]);
         if (ret == -1) {
-            printf("ERR: Invalid argument for command %s\n", argv[0]);
+            printerr("%s: invalid argument for command %s\n", PROGNAME, cmd->argv[0]);
             return ret;
         }
     }
@@ -63,7 +71,8 @@ int cmd_exit(int argc, char (*argv)[MAX_ARG_LEN]) {
     _Exit(ret);
 }
 
-int cmd_pwd(int argc, char (*argv)[MAX_ARG_LEN]) {
+// Print current working directory
+int cmd_pwd(parsed_command *cmd) {
     char buf[MAX_ARG_LEN];
     if (getcwd(buf, MAX_ARG_LEN) == NULL) {
         return errno;
@@ -72,10 +81,12 @@ int cmd_pwd(int argc, char (*argv)[MAX_ARG_LEN]) {
     return 0;
 }
 
+// Fork and execute external program
 int execute_external(parsed_command *cmd) {
+    // Find program from path
     char cmdpath[MAX_ARG_LEN];
     if (which_path(cmd->argv[0], cmdpath) != 0) {
-        printf("wish: command not found: %s\n", cmd->argv[0]);
+        printerr("%s: command not found: %s\n", PROGNAME, cmd->argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -87,42 +98,53 @@ int execute_external(parsed_command *cmd) {
     pid_t pid = 0;
     int rc = fork();
     if (rc < 0) {
-        printf("ERR: forking failed\n");
+        printerr("%s: forking failed\n", PROGNAME);
         return EXIT_FAILURE;
     } else if (rc == 0) {
         pid = getpid();
         if (cmd->background) { printf("-> %d\n", pid); }
+
+        if (strlen(cmd->output_redirect_filename) != 0) {
+            int fd = open(cmd->output_redirect_filename, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+            dup2(fd, STDOUT_FILENO);
+            dup2(fd, STDERR_FILENO);
+            close(fd);
+        }
         execv(cmdpath, cmdargs);
     } else {
         if (!cmd->background) { wait(NULL); }
     }
 
+    fflush(stdout);
     return errno;
 }
 
+// Execute internal command
 int execute_internal(parsed_command *cmd) {
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); ++i) {
         internal_cmd icmd = commands[i];
 
         if (strcmp(icmd.cmd, cmd->argv[0]) == 0) {
-            return (*icmd.callback)(cmd->argc, cmd->argv);
+            return (*icmd.callback)(cmd);
         }
     }
 
     return -1; // Command was not found, is not internal
 }
 
+// Execute parsed command
 int execute_command(parsed_command *cmd) {
+    // First try if it's internal command
     int ret = execute_internal(cmd);
     if (ret != -1) { return ret; }
 
+    // If command was internal, but failed
     if (ret > 0) {
-        char errbuf[MAX_ARG_LEN] = { 0 };
-        snprintf(errbuf, MAX_ARG_LEN, "%s: command not found\n", cmd->argv[0]);
-        write(STDERR_FILENO, errbuf, strlen(errbuf));
+        printerr("%s: command not found\n", cmd->argv[0]);
         return ret;
     }
 
+    // Otherwise it can be external program
     ret = execute_external(cmd);
 
     return ret;

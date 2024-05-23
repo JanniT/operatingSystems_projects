@@ -7,6 +7,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <fcntl.h>
 
 #include "argparse.h"
 #include "path.h"
@@ -16,15 +17,15 @@
 
 struct {
     char cmd[MAX_CMD_NAME_LEN];
-    int (*callback)(int argc, char (*argv)[MAX_ARG_LEN]);
+    int (*callback)(parsed_command *cmd);
 } typedef internal_cmd;
 
 int check_ret(char *s);
 
-int cmd_path(int argc, char (*argv)[MAX_ARG_LEN]);
-int cmd_cd(int argc, char (*argv)[MAX_ARG_LEN]);
-int cmd_exit(int argc, char (*argv)[MAX_ARG_LEN]);
-int cmd_pwd(int argc, char (*argv)[MAX_ARG_LEN]);
+int cmd_path(parsed_command *cmd);
+int cmd_cd(parsed_command *cmd);
+int cmd_exit(parsed_command *cmd);
+int cmd_pwd(parsed_command *cmd);
 
 int execute_internal(parsed_command *cmd);
 int execute_external(parsed_command *cmd);

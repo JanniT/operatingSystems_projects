@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 #include "const.h"
+#include "util.h"
 
 struct {
     int argc;

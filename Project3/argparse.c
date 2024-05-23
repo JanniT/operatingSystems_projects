@@ -1,5 +1,6 @@
 #include "argparse.h"
-#include "cmd.h"
+
+extern int execute_command(parsed_command *cmd);
 
 int parse_and_execute(parsed_command *cmd, char *cmdline) {
     enum Type {
@@ -108,7 +109,7 @@ int parse_and_execute(parsed_command *cmd, char *cmdline) {
 
             if (command_ready) {
                 if (cmd->quote) {
-                    printf("ERR: Unclosed quote\n");
+                    printerr("%s: unclosed quote\n", PROGNAME);
                     return 1;
                 }
 
