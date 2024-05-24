@@ -8,7 +8,14 @@ MYZIPAPP = my-zip
 MYUNZIPAPP = my-unzip
 MYSHELLAPP = wish
 
+MYSHELLAPPSRC = Project3/wish.c Project3/cmd.c Project3/path.c
+MYSHELLAPPSRC += Project3/argparse.c Project3/util.c
+MYSHELLAPPHEADER = Project3/cmd.h Project3/const.h Project3/path.h
+MYSHELLAPPHEADER += Project3/argparse.h Project3/util.h
+
 all: $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP) $(MYSHELLAPP)
+
+debug: $(MYSHELLAPP)-debug
 
 # reverse
 $(REVERSEAPP): Project1/reverse.c
@@ -31,8 +38,11 @@ $(MYUNZIPAPP): Project2/my-unzip.c
 	$(CC) Project2/my-unzip.c -o $(MYUNZIPAPP) $(ARGS)
 
 # wish
-$(MYSHELLAPP): Project3/wish.c Project3/cmd.c Project3/cmd.h Project3/const.h Project3/path.c Project3/path.h Project3/argparse.c Project3/argparse.h Project3/util.c Project3/util.h
-	$(CC) Project3/wish.c Project3/cmd.c Project3/path.c Project3/argparse.c Project3/util.c -D DEBUG -D PROG=$(MYSHELLAPP) -o $(MYSHELLAPP) $(ARGS)
+$(MYSHELLAPP): $(MYSHELLAPPSRC) $(MYSHELLAPPHEADER)
+	$(CC) $(MYSHELLAPPSRC) -D PROG=$(MYSHELLAPP) -o $(MYSHELLAPP) $(ARGS)
+
+$(MYSHELLAPP)-debug: $(MYSHELLAPPSRC) $(MYSHELLAPPHEADER)
+	$(CC) $(MYSHELLAPPSRC) -D DEBUG -D PROG=$(MYSHELLAPP) -o $(MYSHELLAPP) $(ARGS)
 
 clean:
 	rm -f $(REVERSEAPP) $(MYCATAPP) $(MYGREPAPP) $(MYZIPAPP) $(MYUNZIPAPP) $(MYSHELLAPP)
