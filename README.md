@@ -74,6 +74,61 @@ Run the program:
 $ ./my-unzip file1 [file2 ...]
 ```
 
+## Project 3 - Unix shell
+
+This project involves building a simple Unix shell, a command-line interpreter central to the Unix/C programming environment.
+
+### Basic Shell: wish
+The shell, named wish (short for Wisconsin Shell), operates in an interactive loop:
+
+- Prints a prompt wish>
+- Parses user input
+- Executes the specified command
+- Repeats until the user types exit
+
+Run the program: 
+Interactive mode:
+
+```
+$ ./wish
+```
+Batch mode
+
+```
+$ ./wish batch.txt
+```
+
+### Command execution
+
+Executes commands by creating a new process for each command, except for built-in commands. Uses the path variable to find executables.
+
+#### Build-in Commands
+
+```
+wish> exit
+```
+
+```
+wish> cd /desired/path
+```
+
+```
+wish> path /bin /usr/bin
+```
+
+Output redirection using '>'
+
+```
+wish> ls -la /tmp > output.txt
+```
+
+Supports multiple commands in parallel using 'g'
+
+```
+wish> cmd1 & cmd2 args1 args2 & cmd3 args1
+```
+
+
 ## Authors
 
 These projects are done together by:
