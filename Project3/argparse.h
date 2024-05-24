@@ -13,7 +13,6 @@ struct {
     int argc;
     char argv[MAX_ARG_NUM][MAX_ARG_LEN];
     char output_redirect_filename[MAX_ARG_LEN];
-    FILE *output_redirect;
 
     int quote;
     

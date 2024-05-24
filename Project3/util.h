@@ -15,5 +15,6 @@ void debuglog(char *format, ...);
 
 void print_prompt(void);
 void printerr(char *format, ...);
+bool is_interactive(int nextvalue);
 
 #endif // UTIL_H

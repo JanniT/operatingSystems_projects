@@ -129,11 +129,6 @@ int parse_and_execute(parsed_command *cmd, char *cmdline) {
 }
 
 void reset_cmd(parsed_command *cmd) {
-    if (cmd->output_redirect != NULL && cmd->output_redirect != stdout) {
-        fclose(cmd->output_redirect);
-    }
-
     memset(cmd, 0, sizeof(parsed_command));
-    cmd->output_redirect = stdout;
 }
 

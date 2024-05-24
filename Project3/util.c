@@ -79,3 +79,11 @@ void printerr(char *format, ...) {
     write(STDERR_FILENO, errbuf, strlen(errbuf));
 }
 
+bool is_interactive(int nextvalue) {
+    static bool interactive = false;
+    if (nextvalue == 1) { interactive = true; }
+    if (nextvalue == 0) { interactive = false; }
+
+    return interactive;
+}
+

@@ -102,7 +102,7 @@ int execute_external(parsed_command *cmd) {
         return EXIT_FAILURE;
     } else if (rc == 0) {
         pid = getpid();
-        if (cmd->background) { printf("-> %d\n", pid); }
+        if (cmd->background && is_interactive(-1) ) { printf("-> %d\n", pid); }
 
         if (strlen(cmd->output_redirect_filename) != 0) {
             int fd = open(cmd->output_redirect_filename, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
