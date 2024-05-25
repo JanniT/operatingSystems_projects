@@ -20,7 +20,7 @@ struct {
     int (*callback)(parsed_command *cmd);
 } typedef internal_cmd;
 
-int check_ret(char *s);
+int check_atoi_ret(char *s);
 
 int cmd_path(parsed_command *cmd);
 int cmd_cd(parsed_command *cmd);

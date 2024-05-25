@@ -1,4 +1,5 @@
 #include "cmd.h"
+#include <stdio.h>
 
 extern char path[MAX_PATH_LEN];
 
@@ -13,7 +14,7 @@ static const internal_cmd commands[] = {
 // Check if atoi actually failed in the case the string actually was a 0
 // Since atoi will return 0 when parsing failed, which is also a valid
 // parsing result
-int check_ret(char *s) {
+int check_atoi_ret(char *s) {
     int ret = atoi(s);
 
     if (ret == 0 && strcmp("0\0", s) != 0) {
@@ -30,7 +31,10 @@ int cmd_path(parsed_command *cmd) {
         printf("%s\n", path);
         return 0;
     }
-    update_path(cmd->argv[1]);
+
+    for (int i = 1; i < cmd->argc; ++i) {
+        update_path(cmd->argv[i]);
+    }
 
     return 0;
 }
@@ -60,7 +64,7 @@ int cmd_exit(parsed_command *cmd) {
     int ret = 0; // Default to success if no argument given
 
     if (cmd->argc > 1) {
-        ret = check_ret(cmd->argv[1]);
+        ret = check_atoi_ret(cmd->argv[1]);
         if (ret == -1) {
             printerr("%s: invalid argument for command %s\n", PROGNAME, cmd->argv[0]);
             return ret;
@@ -105,6 +109,7 @@ int execute_external(parsed_command *cmd) {
         if (cmd->background && is_interactive(-1) ) { printf("-> %d\n", pid); }
 
         if (strlen(cmd->output_redirect_filename) != 0) {
+            (void)remove(cmd->output_redirect_filename);
             int fd = open(cmd->output_redirect_filename, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
             dup2(fd, STDOUT_FILENO);
             dup2(fd, STDERR_FILENO);
