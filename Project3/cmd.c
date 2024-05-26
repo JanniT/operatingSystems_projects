@@ -104,9 +104,13 @@ int execute_external(parsed_command *cmd) {
         printerr("%s: forking failed\n", PROGNAME);
         return EXIT_FAILURE;
     } else if (rc == 0) {
+        // Get pid of child and if in interactive mode, print the pid into
+        // stdout
         pid = getpid();
         if (cmd->background && is_interactive(-1) ) { printf("-> %d\n", pid); }
 
+        // If output redirect filename is provided, delete the file, and create
+        // new one with stdout and stderr redirected to the new file
         if (strlen(cmd->output_redirect_filename) != 0) {
             (void)remove(cmd->output_redirect_filename);
             int fd = open(cmd->output_redirect_filename, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
@@ -116,6 +120,7 @@ int execute_external(parsed_command *cmd) {
         }
         execv(cmdpath, cmdargs);
     } else {
+        // If regular command, wait for it's execution
         if (!cmd->background) { wait(NULL); }
     }
 
@@ -125,15 +130,18 @@ int execute_external(parsed_command *cmd) {
 
 // Execute internal command
 int execute_internal(parsed_command *cmd) {
+    // Try to find the command from 'commands' list
     for (int i = 0; i < sizeof(commands) / sizeof(commands[0]); ++i) {
         internal_cmd icmd = commands[i];
 
+        // Execute the command corresponding function if a match is found
         if (strcmp(icmd.cmd, cmd->argv[0]) == 0) {
             return (*icmd.callback)(cmd);
         }
     }
 
-    return -1; // Command was not found, is not internal
+    // If command is not found, it might be external
+    return -1;
 }
 
 // Execute parsed command

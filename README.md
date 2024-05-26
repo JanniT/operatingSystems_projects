@@ -132,6 +132,9 @@ If no args are provided, will print current 'path'
 
 #### Features
 
+Project minimizes the use of heap memory. Only heap allocations are related
+to file handling.
+
 Arguments are parsed with whitespace as a delimiter with the exception of
 text in quotes. Quotes can include whitespace characters, and the contents
 will get parsed as a single token.

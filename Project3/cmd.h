@@ -15,13 +15,17 @@
 
 #define MAX_CMD_NAME_LEN 64
 
+// Internal command struct that holds the command name and function attached
+// to it
 struct {
     char cmd[MAX_CMD_NAME_LEN];
     int (*callback)(parsed_command *cmd);
 } typedef internal_cmd;
 
+// Helper function to check if atoi function had a successful parse
 int check_atoi_ret(char *s);
 
+// Internal commands
 int cmd_path(parsed_command *cmd);
 int cmd_cd(parsed_command *cmd);
 int cmd_exit(parsed_command *cmd);

@@ -28,6 +28,7 @@ void debuglog(char *format, ...) {
 #endif
 }
 
+// Print prompt with current working directory followed by a dollar sign
 void print_prompt(void) {
     char buf[MAX_ARG_LEN];
     int is_path = 1;
@@ -50,11 +51,15 @@ void print_prompt(void) {
         // /home/foobar/Downloads
         //              ^ i would be set there
         i = strlen(buf);
+        // Iterate backwards until reaching the beginning or a slash char
         while (buf[i--] != '/' && i > 0) {}
 
         // Handle when cwd is root "/" or some dir in root, like "/home"
         // /                  | /home
         // ^ i would be there |  ^ i would be set here
+        //
+        // Add into the offset, since backwards iteration is done until
+        // reaching a slash char or a beginning of the string, which is too far
         if (i != 0) {
             i += 2;
         } else {
@@ -79,6 +84,9 @@ void printerr(char *format, ...) {
     write(STDERR_FILENO, errbuf, strlen(errbuf));
 }
 
+// Contains a static value that can be retrieved or updated depending on param
+// 0 and 1 sets value and returns the new value, other parameter values will
+// only return the current value.
 bool is_interactive(int nextvalue) {
     static bool interactive = false;
     if (nextvalue == 1) { interactive = true; }

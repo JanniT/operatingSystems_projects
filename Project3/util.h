@@ -10,11 +10,15 @@
 
 #include "const.h"
 
+// Debugging tools
 void reveal(char *str);
 void debuglog(char *format, ...);
 
+// Print prompt and error message
 void print_prompt(void);
 void printerr(char *format, ...);
+
+// Check if in interactive mode
 bool is_interactive(int nextvalue);
 
 #endif // UTIL_H

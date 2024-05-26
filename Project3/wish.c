@@ -32,12 +32,10 @@ int main(int argc, char **argv) {
     if (argc < 2) {
         // Run interactive mode
         (void)is_interactive(1);
-
         ret = run_shell(stdin);
     } else {
         // Run batch mode
         (void)is_interactive(0);
-
         FILE *file = fopen(argv[1], "r");
         if (file == NULL) {
             printerr("%s: %s: no such file or directory\n", PROGNAME, argv[1]);
