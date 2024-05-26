@@ -100,13 +100,9 @@ presses `^C` or uses a internal exit command.
 Batch mode works the same way, except will not print prompt and will read
 commands from a provided file instead of from stdin.
 
-```
-$ ./wish
--> Will run interactive mode
+`$ ./wish` Will run interactive mode
 
-$ ./wish batch.txt
--> Will run batch mode
-```
+`$ ./wish batchfile` Will run batch mode, and execute commands from `batchfile`
 
 ### Command execution
 
@@ -141,8 +137,11 @@ text in quotes. Quotes can include whitespace characters, and the contents
 will get parsed as a single token.
 
 ```
-$    echo      this is "a    test !"
--> Would be tokenized to: [echo] [this] [is] [a    test !]
+$    echo      this is "a    test  !"
+```
+Would be tokenized to:
+```
+[echo] [this] [is] [a    test  !]
 ```
 
 The shell supports a output redirection with `>` symbol. Which redirects

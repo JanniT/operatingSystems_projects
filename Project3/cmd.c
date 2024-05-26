@@ -1,5 +1,4 @@
 #include "cmd.h"
-#include <stdio.h>
 
 extern char path[MAX_PATH_LEN];
 
@@ -154,5 +153,4 @@ int execute_command(parsed_command *cmd) {
 
     return ret;
 }
-
 

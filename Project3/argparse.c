@@ -125,6 +125,8 @@ int parse_and_execute(parsed_command *cmd, char *cmdline) {
         }
     }
 
+    waitpid(-1, NULL, 0);
+
     return 0;
 }
 
